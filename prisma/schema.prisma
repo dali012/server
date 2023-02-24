@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type Detail {
+  machine                String?
+  nbr_tirage_tour        Int?
+  numerotation           Int?
+  format_impression      String?
+  nbr_plaque             Int?
+  n_bon_commande         Int
+  Date                   String
+  n_commande             Int
+  qte                    Int
+  format_papier          String?
+  qte_papier_par_couleur Int?
+  type_finition          String?
+}
+
+model Client {
+  id_client   String    @id @default(auto()) @map("_id") @db.ObjectId
+  code_client Int       @unique
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
+  detail      Detail[]
+}
