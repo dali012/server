@@ -13,6 +13,7 @@ type Detail {
   numerotation           Int?
   format_impression      String?
   nbr_plaque             Int?
+  nbr_poses              Int?
   n_bon_commande         Int
   Date                   String
   n_commande             Int

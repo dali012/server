@@ -7,6 +7,6 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET,PUT,POST,DELETE',
   });
-  await app.listen(3000);
+  await app.listen(1337);
 }
 bootstrap();

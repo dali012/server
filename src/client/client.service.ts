@@ -10,10 +10,18 @@ export class ClientService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createClientDto: CreateClientDto): Promise<Client> {
-    const newClient = await this.prisma.client.create({
-      data: createClientDto,
+    const clientExists = await this.prisma.client.findUnique({
+      where: {
+        code_client: createClientDto.code_client,
+      },
     });
-    return newClient;
+    if (!clientExists) {
+      const newClient = await this.prisma.client.create({
+        data: createClientDto,
+      });
+      return newClient;
+    }
+    throw new HttpException('client exist', HttpStatus.FOUND);
   }
 
   async addAdministratif(
@@ -56,12 +64,12 @@ export class ClientService {
   }
 
   async update(
-    id_client: string,
+    code_client: number,
     updateClientDto: UpdateClientDto,
   ): Promise<Client> {
     const clientExist = await this.prisma.client.findUnique({
       where: {
-        id_client,
+        code_client,
       },
     });
     if (!clientExist) {
@@ -69,7 +77,7 @@ export class ClientService {
     }
     return await this.prisma.client.update({
       where: {
-        id_client,
+        code_client,
       },
       data: updateClientDto,
     });
@@ -89,6 +97,18 @@ export class ClientService {
         id_client,
       },
     });
+  }
+
+  async getClientWitchCodeClient() {
+    const clients = await this.prisma.client.findMany({
+      select: {
+        code_client: true,
+      },
+      orderBy: {
+        code_client: 'asc',
+      },
+    });
+    return clients;
   }
 
   private exclude<Client, Key extends keyof Client>(

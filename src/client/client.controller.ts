@@ -25,6 +25,7 @@ export class ClientController {
   }
 
   @Post('/add-commande/:code_client')
+  @HttpCode(200)
   async addCommande(
     @Body() createCommande: CreateCommande,
     @Param('code_client') code_client: string,
@@ -40,17 +41,22 @@ export class ClientController {
     return await this.clientService.findAll();
   }
 
+  @Get('/code_client/asc')
+  async findClients() {
+    return await this.clientService.getClientWitchCodeClient();
+  }
+
   @Get(':code_client')
   async findOne(@Param('code_client') code_client: string): Promise<Client> {
     return await this.clientService.findOneByCodeClient(+code_client);
   }
 
-  @Patch(':id_client')
+  @Patch(':code_client')
   async update(
-    @Param('id_client') id_client: string,
+    @Param('code_client') code_client: string,
     @Body() updateClientDto: UpdateClientDto,
   ): Promise<Client> {
-    return await this.clientService.update(id_client, updateClientDto);
+    return await this.clientService.update(+code_client, updateClientDto);
   }
 
   @Delete(':id_client')

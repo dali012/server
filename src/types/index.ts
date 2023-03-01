@@ -13,6 +13,7 @@ export type Detail = {
   numerotation: number;
   format_impression: string;
   nbr_plaque: number;
+  nbr_poses: number;
   format_papier: string;
   qte_papier_par_couleur: number;
   type_finition: string;
