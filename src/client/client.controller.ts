@@ -7,8 +7,6 @@ import {
   Param,
   Delete,
   ValidationPipe,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 import { Client } from '@prisma/client';
 import { FindOneCodeClient } from 'src/utils/findOneParams';
