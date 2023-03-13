@@ -17,12 +17,11 @@ model Client {
 
 model Presentaion {
   id_presentation String            @id @default(auto()) @map("_id") @db.ObjectId
-  presentation    String?
+  nom_article     String?
   papier_grammage String?
   couleur         String?
   format_fini     String?
   nbr_exemplaire  Int?
-  code_client     Int
   Fiche_Technique Fiche_Technique[]
 }
 
@@ -34,7 +33,6 @@ model PAO {
   created_at      DateTime          @default(now())
   updated_at      DateTime          @updatedAt
   remarque        String?
-  code_client     Int
   Fiche_Technique Fiche_Technique[]
 }
 
@@ -46,7 +44,6 @@ model Administratif {
   n_commande       Int?
   quantite         Int?
   remarque         String?
-  code_client      Int
   Fiche_Technique  Fiche_Technique[]
 }
 
@@ -58,7 +55,6 @@ model Production {
   format_impression String?
   nbr_poses         Int?
   nbr_plaques       Int?
-  code_client       Int
   Fiche_Technique   Fiche_Technique[]
 }
 
@@ -67,22 +63,22 @@ model Finition {
   format_papier      String?
   qte_papier_couleur Int?
   type_finition      String?
-  code_client        Int
   Fiche_Technique    Fiche_Technique[]
 }
 
 model Fiche_Technique {
-  if_fiche_technique            String        @id @default(auto()) @map("_id") @db.ObjectId
-  presentation                  Presentaion   @relation(fields: [presentationId_presentation], references: [id_presentation])
-  presentationId_presentation   String        @db.ObjectId
-  pao                           PAO           @relation(fields: [pAOId_pao], references: [id_pao])
-  pAOId_pao                     String        @db.ObjectId
-  administratif                 Administratif @relation(fields: [administratifId_administratif], references: [id_administratif])
-  administratifId_administratif String        @db.ObjectId
-  production                    Production    @relation(fields: [productionId_production], references: [id_production])
-  productionId_production       String        @db.ObjectId
-  finition                      Finition      @relation(fields: [finitionId_finition], references: [id_finition])
-  finitionId_finition           String        @db.ObjectId
-  Client                        Client?       @relation(fields: [clientId_client], references: [id_client])
-  clientId_client               String?       @db.ObjectId
+  id_fiche_technique            String         @id @default(auto()) @map("_id") @db.ObjectId
+  code_client                   Int
+  presentation                  Presentaion?   @relation(fields: [presentationId_presentation], references: [id_presentation])
+  presentationId_presentation   String         @db.ObjectId
+  pao                           PAO?           @relation(fields: [pAOId_pao], references: [id_pao])
+  pAOId_pao                     String         @db.ObjectId
+  administratif                 Administratif? @relation(fields: [administratifId_administratif], references: [id_administratif])
+  administratifId_administratif String         @db.ObjectId
+  production                    Production?    @relation(fields: [productionId_production], references: [id_production])
+  productionId_production       String         @db.ObjectId
+  finition                      Finition?      @relation(fields: [finitionId_finition], references: [id_finition])
+  finitionId_finition           String         @db.ObjectId
+  Client                        Client?        @relation(fields: [clientId_client], references: [id_client])
+  clientId_client               String?        @db.ObjectId
 }

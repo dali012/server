@@ -27,7 +27,19 @@ export class ClientService {
   }
 
   async findAllClients(): Promise<Client[]> {
-    const clients = await this.prisma.client.findMany();
+    const clients = await this.prisma.client.findMany({
+      include: {
+        fiche_technique: {
+          include: {
+            presentation: true,
+            pao: true,
+            administratif: true,
+            production: true,
+            finition: true,
+          },
+        },
+      },
+    });
     if (clients.length === 0) {
       throw new HttpException('no clients found', HttpStatus.NOT_FOUND);
     }
@@ -39,6 +51,17 @@ export class ClientService {
       return await this.prisma.client.findUniqueOrThrow({
         where: {
           code_client,
+        },
+        include: {
+          fiche_technique: {
+            include: {
+              presentation: true,
+              pao: true,
+              administratif: true,
+              production: true,
+              finition: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -62,6 +85,17 @@ export class ClientService {
           code_client,
         },
         data: updateClientDto,
+        include: {
+          fiche_technique: {
+            include: {
+              presentation: true,
+              pao: true,
+              administratif: true,
+              production: true,
+              finition: true,
+            },
+          },
+        },
       });
     } catch (error) {
       if (error.code === 'P2025') {
@@ -85,10 +119,10 @@ export class ClientService {
       if (error.code === 'P2025') {
         throw new HttpException('no client found', HttpStatus.NOT_FOUND);
       }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    throw new HttpException(
-      'Something went wrong',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
   }
 }

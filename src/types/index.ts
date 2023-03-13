@@ -8,12 +8,11 @@ export type Client = {
 
 export type Presentation = {
   id_presentation?: string;
-  presentation?: string;
+  nom_article?: string;
   papier_grammage?: string;
   couleur?: string;
   format_fini?: string;
   nbr_exemplaire?: number;
-  code_client: number;
 };
 
 export type PAO = {
@@ -24,7 +23,6 @@ export type PAO = {
   created_at?: Date;
   updated_at?: Date;
   remarque?: string;
-  code_client: number;
 };
 
 export type Administratif = {
@@ -35,7 +33,6 @@ export type Administratif = {
   n_commande?: number;
   quantite?: number;
   remarque?: string;
-  code_client: number;
 };
 
 export type Production = {
@@ -46,7 +43,6 @@ export type Production = {
   format_impression?: string;
   nbr_poses?: number;
   nbr_plaques?: number;
-  code_client: number;
 };
 
 export type Finition = {
@@ -54,11 +50,11 @@ export type Finition = {
   format_papier?: string;
   qte_papier_couleur?: number;
   type_finition?: string;
-  code_client: number;
 };
 
 export type Fiche_Technique = {
   id_fiche_technique?: string;
+  code_client: number;
   presentation: Presentation;
   pao: PAO;
   administratif: Administratif;
