@@ -7,26 +7,82 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-type Detail {
-  machine                String?
-  nbr_tirage_tour        Int?
-  numerotation           Int?
-  format_impression      String?
-  nbr_plaque             Int?
-  nbr_poses              Int?
-  n_bon_commande         Int
-  Date                   String
-  n_commande             Int
-  qte                    Int
-  format_papier          String?
-  qte_papier_par_couleur Int?
-  type_finition          String?
+model Client {
+  id_client       String            @id @default(auto()) @map("_id") @db.ObjectId
+  code_client     Int               @unique
+  created_at      DateTime?         @default(now())
+  updated_at      DateTime?         @updatedAt
+  fiche_technique Fiche_Technique[]
 }
 
-model Client {
-  id_client   String    @id @default(auto()) @map("_id") @db.ObjectId
-  code_client Int       @unique
-  created_at  DateTime? @default(now())
-  updated_at  DateTime? @updatedAt
-  detail      Detail[]
+model Presentaion {
+  id_presentation String            @id @default(auto()) @map("_id") @db.ObjectId
+  presentation    String?
+  papier_grammage String?
+  couleur         String?
+  format_fini     String?
+  nbr_exemplaire  Int?
+  code_client     Int
+  Fiche_Technique Fiche_Technique[]
+}
+
+model PAO {
+  id_pao          String            @id @default(auto()) @map("_id") @db.ObjectId
+  film            String?
+  plaque          String?
+  archived        Boolean?          @default(false)
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  remarque        String?
+  code_client     Int
+  Fiche_Technique Fiche_Technique[]
+}
+
+model Administratif {
+  id_administratif String            @id @default(auto()) @map("_id") @db.ObjectId
+  devis            String?
+  n_bon_commande   Int?
+  date             String?
+  n_commande       Int?
+  quantite         Int?
+  remarque         String?
+  code_client      Int
+  Fiche_Technique  Fiche_Technique[]
+}
+
+model Production {
+  id_production     String            @id @default(auto()) @map("_id") @db.ObjectId
+  conducteur        String?
+  nbr_tirage        Int?
+  numerotaion       Int?
+  format_impression String?
+  nbr_poses         Int?
+  nbr_plaques       Int?
+  code_client       Int
+  Fiche_Technique   Fiche_Technique[]
+}
+
+model Finition {
+  id_finition        String            @id @default(auto()) @map("_id") @db.ObjectId
+  format_papier      String?
+  qte_papier_couleur Int?
+  type_finition      String?
+  code_client        Int
+  Fiche_Technique    Fiche_Technique[]
+}
+
+model Fiche_Technique {
+  if_fiche_technique            String        @id @default(auto()) @map("_id") @db.ObjectId
+  presentation                  Presentaion   @relation(fields: [presentationId_presentation], references: [id_presentation])
+  presentationId_presentation   String        @db.ObjectId
+  pao                           PAO           @relation(fields: [pAOId_pao], references: [id_pao])
+  pAOId_pao                     String        @db.ObjectId
+  administratif                 Administratif @relation(fields: [administratifId_administratif], references: [id_administratif])
+  administratifId_administratif String        @db.ObjectId
+  production                    Production    @relation(fields: [productionId_production], references: [id_production])
+  productionId_production       String        @db.ObjectId
+  finition                      Finition      @relation(fields: [finitionId_finition], references: [id_finition])
+  finitionId_finition           String        @db.ObjectId
+  Client                        Client?       @relation(fields: [clientId_client], references: [id_client])
+  clientId_client               String?       @db.ObjectId
 }

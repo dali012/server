@@ -1,6 +1,7 @@
-import { Detail } from '@prisma/client';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateClientDto {
+  @IsNumber()
+  @IsNotEmpty()
   code_client: number;
-  detail: Detail;
 }

@@ -5,20 +5,6 @@ const prisma = new PrismaClient();
 const userData: Prisma.ClientCreateInput[] = [
   {
     code_client: 23,
-    detail: {
-      n_bon_commande: 12,
-      Date: '2020-02-22',
-      n_commande: 14,
-      qte: 500,
-      machine: 'test',
-      nbr_tirage_tour: 1,
-      numerotation: 5,
-      format_impression: 'normale',
-      nbr_plaque: 3,
-      format_papier: 'A5',
-      qte_papier_par_couleur: 2,
-      type_finition: 'Matte',
-    },
   },
 ];
 

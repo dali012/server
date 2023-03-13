@@ -6,12 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-  HttpCode,
+  ValidationPipe,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Client } from '@prisma/client';
+import { FindOneCodeClient } from 'src/utils/findOneParams';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
-import { CreateCommande } from './dto/create-commande';
 import { UpdateClientDto } from './dto/update-client.dto';
 
 @Controller('client')
@@ -19,48 +21,48 @@ export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 
   @Post()
-  @HttpCode(200)
-  async create(@Body() createClientDto: CreateClientDto): Promise<Client> {
-    return await this.clientService.create(createClientDto);
-  }
-
-  @Post('/add-commande/:code_client')
-  @HttpCode(200)
-  async addCommande(
-    @Body() createCommande: CreateCommande,
-    @Param('code_client') code_client: string,
+  async createClient(
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    createClientDto: CreateClientDto,
   ): Promise<Client> {
-    return await this.clientService.addAdministratif(
-      +code_client,
-      createCommande,
-    );
+    return await this.clientService.createClient(createClientDto);
   }
 
   @Get()
-  async findAll(): Promise<Client[]> {
-    return await this.clientService.findAll();
-  }
-
-  @Get('/code_client/asc')
-  async findClients() {
-    return await this.clientService.getClientWitchCodeClient();
+  async findAllClients(): Promise<Client[]> {
+    return this.clientService.findAllClients();
   }
 
   @Get(':code_client')
-  async findOne(@Param('code_client') code_client: string): Promise<Client> {
+  async findOneByCodeClient(@Param() { code_client }: FindOneCodeClient) {
     return await this.clientService.findOneByCodeClient(+code_client);
   }
 
   @Patch(':code_client')
-  async update(
-    @Param('code_client') code_client: string,
-    @Body() updateClientDto: UpdateClientDto,
+  async updateClient(
+    @Param() { code_client }: FindOneCodeClient,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    updateClientDto: UpdateClientDto,
   ): Promise<Client> {
-    return await this.clientService.update(+code_client, updateClientDto);
+    return await this.clientService.updateClient(+code_client, updateClientDto);
   }
 
-  @Delete(':id_client')
-  async remove(@Param('id_client') id_client: string): Promise<Client> {
-    return await this.clientService.remove(id_client);
+  @Delete(':code_client')
+  async removeClient(
+    @Param() { code_client }: FindOneCodeClient,
+  ): Promise<Client> {
+    return await this.clientService.removeClient(+code_client);
   }
 }

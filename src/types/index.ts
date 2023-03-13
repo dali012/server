@@ -1,20 +1,67 @@
 export type Client = {
   id_client?: string;
   code_client: number;
-  detail: Detail[];
+  created_at?: Date;
+  updated_at?: Date;
+  fiche_technique: Fiche_Technique[];
 };
-export type Detail = {
-  n_bon_commande: number;
-  Date: string;
-  n_commande: number;
-  qte: number;
-  machine: string;
-  nbr_tirage_tour: number;
-  numerotation: number;
-  format_impression: string;
-  nbr_plaque: number;
-  nbr_poses: number;
-  format_papier: string;
-  qte_papier_par_couleur: number;
-  type_finition: string;
+
+export type Presentation = {
+  id_presentation?: string;
+  presentation?: string;
+  papier_grammage?: string;
+  couleur?: string;
+  format_fini?: string;
+  nbr_exemplaire?: number;
+  code_client: number;
+};
+
+export type PAO = {
+  id_pao?: string;
+  film?: string;
+  plaque?: string;
+  archived?: boolean;
+  created_at?: Date;
+  updated_at?: Date;
+  remarque?: string;
+  code_client: number;
+};
+
+export type Administratif = {
+  id_administratif?: string;
+  devis?: string;
+  n_bon_commande?: number;
+  date?: string;
+  n_commande?: number;
+  quantite?: number;
+  remarque?: string;
+  code_client: number;
+};
+
+export type Production = {
+  id_production?: string;
+  conducteur?: string;
+  nbr_tirage?: number;
+  numerotaion?: number;
+  format_impression?: string;
+  nbr_poses?: number;
+  nbr_plaques?: number;
+  code_client: number;
+};
+
+export type Finition = {
+  id_finition?: string;
+  format_papier?: string;
+  qte_papier_couleur?: number;
+  type_finition?: string;
+  code_client: number;
+};
+
+export type Fiche_Technique = {
+  id_fiche_technique?: string;
+  presentation: Presentation;
+  pao: PAO;
+  administratif: Administratif;
+  production: Production;
+  finition: Finition;
 };

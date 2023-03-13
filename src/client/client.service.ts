@@ -2,122 +2,93 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Client } from '@prisma/client';
 import { PrismaService } from 'src/db/db.service';
 import { CreateClientDto } from './dto/create-client.dto';
-import { CreateCommande } from './dto/create-commande';
 import { UpdateClientDto } from './dto/update-client.dto';
 
 @Injectable()
 export class ClientService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createClientDto: CreateClientDto): Promise<Client> {
-    const clientExists = await this.prisma.client.findUnique({
-      where: {
-        code_client: createClientDto.code_client,
-      },
-    });
-    if (!clientExists) {
-      const newClient = await this.prisma.client.create({
-        data: createClientDto,
+  async createClient({ code_client }: CreateClientDto): Promise<Client> {
+    try {
+      return await this.prisma.client.create({
+        data: {
+          code_client,
+        },
       });
-      return newClient;
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new HttpException('client already exist', HttpStatus.FOUND);
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    throw new HttpException('client exist', HttpStatus.FOUND);
   }
 
-  async addAdministratif(
-    code_client: number,
-    data: CreateCommande,
-  ): Promise<Client> {
-    const client = await this.prisma.client.findUnique({
-      where: {
-        code_client,
-      },
-    });
-
-    client.detail.push(data.detail);
-
-    const updatedClient = await this.prisma.client.update({
-      where: {
-        code_client,
-      },
-      data: {
-        detail: client.detail,
-      },
-    });
-    return updatedClient;
-  }
-
-  async findAll(): Promise<Client[]> {
-    return await this.prisma.client.findMany();
-  }
-
-  async findOneByCodeClient(code_client: number): Promise<Client> {
-    const clientExist = await this.prisma.client.findUnique({
-      where: {
-        code_client,
-      },
-    });
-    if (!clientExist) {
-      throw new HttpException("client dosen't exist", HttpStatus.NOT_FOUND);
+  async findAllClients(): Promise<Client[]> {
+    const clients = await this.prisma.client.findMany();
+    if (clients.length === 0) {
+      throw new HttpException('no clients found', HttpStatus.NOT_FOUND);
     }
-    return clientExist;
-  }
-
-  async update(
-    code_client: number,
-    updateClientDto: UpdateClientDto,
-  ): Promise<Client> {
-    const clientExist = await this.prisma.client.findUnique({
-      where: {
-        code_client,
-      },
-    });
-    if (!clientExist) {
-      throw new HttpException("client dosen't exist", HttpStatus.NOT_FOUND);
-    }
-    return await this.prisma.client.update({
-      where: {
-        code_client,
-      },
-      data: updateClientDto,
-    });
-  }
-
-  async remove(id_client: string): Promise<Client> {
-    const clientExist = await this.prisma.client.findUnique({
-      where: {
-        id_client,
-      },
-    });
-    if (!clientExist) {
-      throw new HttpException("client dosen't exist", HttpStatus.NOT_FOUND);
-    }
-    return await this.prisma.client.delete({
-      where: {
-        id_client,
-      },
-    });
-  }
-
-  async getClientWitchCodeClient() {
-    const clients = await this.prisma.client.findMany({
-      select: {
-        code_client: true,
-      },
-      orderBy: {
-        code_client: 'asc',
-      },
-    });
     return clients;
   }
 
-  private exclude<Client, Key extends keyof Client>(
-    client: Client,
-    keys: Key[],
-  ): Omit<Client, Key> {
-    for (const key of keys) {
-      delete client[key];
+  async findOneByCodeClient(code_client: number): Promise<Client> {
+    try {
+      return await this.prisma.client.findUniqueOrThrow({
+        where: {
+          code_client,
+        },
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException('no client found', HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    return client;
+  }
+
+  async updateClient(
+    code_client: number,
+    updateClientDto: UpdateClientDto,
+  ): Promise<Client> {
+    try {
+      return await this.prisma.client.update({
+        where: {
+          code_client,
+        },
+        data: updateClientDto,
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException('no client found', HttpStatus.NOT_FOUND);
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async removeClient(code_client: number): Promise<Client> {
+    try {
+      return await this.prisma.client.delete({
+        where: {
+          code_client,
+        },
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException('no client found', HttpStatus.NOT_FOUND);
+      }
+    }
+    throw new HttpException(
+      'Something went wrong',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 }
